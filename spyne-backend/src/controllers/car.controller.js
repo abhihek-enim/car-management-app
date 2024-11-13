@@ -6,8 +6,19 @@ import { Car } from "../models/car.model.js";
 import {
   uploadOnCloudinary,
   updateFileOnCloudinary,
+  deleteImagesFromCloudinary,
 } from "../utils/cloudinary.js";
 import mongoose from "mongoose";
+
+function extractPublicIds(images) {
+  return images
+    .map((imageUrl) => {
+      // Use a regular expression to capture the public ID part of the URL
+      const match = imageUrl.match(/\/upload\/(?:v\d+\/)?([^/.]+)\./);
+      return match ? match[1] : null; // Return public ID if matched, else null
+    })
+    .filter(Boolean); // Remove null values in case of unmatched URLs
+}
 
 const addCarDetails = asyncHandler(async (req, res) => {
   const { title, description, tags } = req.body;
@@ -170,4 +181,32 @@ const updateCarDetails = asyncHandler(async (req, res) => {
     );
 });
 
-export { addCarDetails, getCarDetails, updateCarDetails };
+const deleteCar = asyncHandler(async (req, res) => {
+  const { carId } = req.params;
+  if (!carId) {
+    throw new ApiError(400, "Car Id is required.");
+  }
+  const carDetails = await Car.findById(new mongoose.Types.ObjectId(carId));
+  if (!carDetails) {
+    throw new ApiError(409, "Car does not exists.");
+  }
+
+  const publicIds = extractPublicIds(carDetails.images);
+  const results = await deleteImagesFromCloudinary(publicIds);
+
+  const deletionErrors = results.filter((result) => result.result !== "ok");
+  if (deletionErrors.length > 0) {
+    throw new ApiError(
+      500,
+      "Some images could not be deleted from Cloudinary."
+    );
+  }
+
+  await Car.findByIdAndDelete(new mongoose.Types.ObjectId(carId));
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, results, "Car deleted successfully"));
+});
+
+export { addCarDetails, getCarDetails, updateCarDetails, deleteCar };

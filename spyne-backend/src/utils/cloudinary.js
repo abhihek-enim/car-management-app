@@ -25,6 +25,21 @@ const uploadOnCloudinary = async (localFilePath) => {
   }
 };
 
+const deleteImagesFromCloudinary = async (publicIds) => {
+  try {
+    const deletePromises = publicIds.map((publicId) =>
+      cloudinary.uploader.destroy(publicId)
+    );
+
+    const results = await Promise.all(deletePromises);
+
+    return results;
+  } catch (error) {
+    console.error("Error deleting images from Cloudinary:", error);
+    throw new Error("Failed to delete images.");
+  }
+};
+
 const updateFileOnCloudinary = async (localFilePath, publicId) => {
   try {
     if (!localFilePath || !publicId) return null;
@@ -50,4 +65,8 @@ const updateFileOnCloudinary = async (localFilePath, publicId) => {
   }
 };
 
-export { uploadOnCloudinary, updateFileOnCloudinary };
+export {
+  uploadOnCloudinary,
+  updateFileOnCloudinary,
+  deleteImagesFromCloudinary,
+};

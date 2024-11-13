@@ -3,6 +3,7 @@ import { upload } from "../middlewares/multer.middlerware.js";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
 import {
   addCarDetails,
+  deleteCar,
   getCarDetails,
   updateCarDetails,
 } from "../controllers/car.controller.js";
@@ -19,11 +20,13 @@ router
 
 router.route("/car/:carId").get(verifyJWT, getCarDetails);
 router
-  .route("/car/updateCar")
+  .route("/updateCar")
   .post(
     verifyJWT,
     upload.fields([{ name: "car", maxCount: 10 }]),
     updateCarDetails
   );
+
+router.route("/deleteCar/:carId").delete(verifyJWT, deleteCar);
 
 export default router;
