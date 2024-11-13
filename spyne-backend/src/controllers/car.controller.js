@@ -209,4 +209,31 @@ const deleteCar = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, results, "Car deleted successfully"));
 });
 
-export { addCarDetails, getCarDetails, updateCarDetails, deleteCar };
+const getAllCars = asyncHandler(async (req, res) => {
+  const cars = await Car.find(); // Fetch all cars from the database
+  return res
+    .status(200)
+    .json(new ApiResponse(200, cars, "All cars retrieved successfully"));
+});
+
+const getCarsbyUserId = asyncHandler(async (req, res) => {
+  const userId = req.user?._id;
+  if (!userId) {
+    throw new ApiError(400, "User ID is required.");
+  }
+
+  // Fetch all cars where userId matches the logged-in user
+  const cars = await Car.find({ userId: userId });
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, cars, "Cars retrieved successfully"));
+});
+export {
+  addCarDetails,
+  getCarDetails,
+  getAllCars,
+  getCarsbyUserId,
+  updateCarDetails,
+  deleteCar,
+};
