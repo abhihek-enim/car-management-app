@@ -222,7 +222,6 @@ const getCarsbyUserId = asyncHandler(async (req, res) => {
     throw new ApiError(400, "User ID is required.");
   }
 
-  // Fetch all cars where userId matches the logged-in user
   const cars = await Car.find({ userId: userId });
 
   return res

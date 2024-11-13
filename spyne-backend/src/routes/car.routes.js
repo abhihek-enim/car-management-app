@@ -4,7 +4,9 @@ import { verifyJWT } from "../middlewares/auth.middleware.js";
 import {
   addCarDetails,
   deleteCar,
+  getAllCars,
   getCarDetails,
+  getCarsbyUserId,
   updateCarDetails,
 } from "../controllers/car.controller.js";
 
@@ -28,5 +30,8 @@ router
   );
 
 router.route("/deleteCar/:carId").delete(verifyJWT, deleteCar);
+
+router.route("/getAllCars").get(verifyJWT, getAllCars);
+router.route("/getCarsByUserId").get(verifyJWT, getCarsbyUserId);
 
 export default router;
