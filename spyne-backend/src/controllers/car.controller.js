@@ -84,14 +84,90 @@ const getCarDetails = asyncHandler(async (req, res) => {
 });
 const updateCarDetails = asyncHandler(async (req, res) => {
   const { title, description, tags, imagePublicIds, carId } = req.body;
-
-  if (!title || !description || (tags && tags.length == 0)) {
+  console.log(req.body);
+  if (!title || !description || !tags || tags.length === 0) {
     throw new ApiError(
       400,
-      "Title, description and at least one tag is required"
+      "Title, description, and at least one tag are required."
     );
   }
-  if (!(imagePublicIds.length === 0)) {
+
+  const isCarPresent = await Car.findById(carId);
+  if (!isCarPresent) {
+    throw new ApiError(404, "Car does not exist.");
   }
+
+  let carImages = [];
+
+  // Update images only if imagePublicIds are provided
+  if (imagePublicIds && imagePublicIds.length > 0) {
+    let carImagesLocalPath = [];
+    if (req.files && Array.isArray(req.files.car) && req.files.car.length > 0) {
+      carImagesLocalPath = req.files.car;
+    } else {
+      throw new ApiError(
+        400,
+        "At least one new image is required if updating images."
+      );
+    }
+
+    // Check if the number of image files and public IDs match
+    if (carImagesLocalPath.length !== imagePublicIds.length) {
+      throw new ApiError(
+        400,
+        "The number of images and public IDs must match."
+      );
+    }
+
+    // Loop through the images to replace them on Cloudinary
+    for (let i = 0; i < carImagesLocalPath.length; i++) {
+      const carImage = carImagesLocalPath[i];
+      const publicId = imagePublicIds[i];
+
+      if (!carImage.path) {
+        throw new ApiError(400, "Image path cannot be empty.");
+      }
+
+      // Upload the new image, replacing the one with the specified public ID
+      const uploadResult = await updateFileOnCloudinary(
+        carImage.path,
+        publicId
+      );
+
+      if (!uploadResult || !uploadResult.url) {
+        throw new ApiError(500, "Error while uploading image.");
+      }
+
+      carImages.push(uploadResult.url);
+    }
+  } else {
+    // Retain the existing images if no new images are provided
+    carImages = isCarPresent.images;
+  }
+
+  // Update car details
+  const updatedCarDetails = await Car.findByIdAndUpdate(
+    carId,
+    {
+      $set: {
+        title,
+        description,
+        tags,
+        images: carImages,
+      },
+    },
+    { new: true }
+  );
+
+  return res
+    .status(200)
+    .json(
+      new ApiResponse(
+        200,
+        updatedCarDetails,
+        "Car details updated successfully."
+      )
+    );
 });
-export { addCarDetails, getCarDetails };
+
+export { addCarDetails, getCarDetails, updateCarDetails };
