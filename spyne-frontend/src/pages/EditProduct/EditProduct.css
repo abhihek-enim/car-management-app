@@ -104,6 +104,7 @@ h1 {
   align-items: center;
   justify-content: center;
   background-color: #f0f0f0;
+  position: relative; /* Positioning context for the button */
 }
 
 .image-preview img {
@@ -115,4 +116,26 @@ h1 {
 
 .image-preview img:hover {
   transform: scale(1.1);
+}
+
+/* Style for the Edit button */
+.image-preview button {
+  position: absolute; /* Positioning the button on top of the image */
+  bottom: 5px; /* Place it slightly above the bottom edge */
+  left: 50%; /* Center it horizontally */
+  transform: translateX(-50%); /* Ensure the button is centered */
+  padding: 5px 10px;
+  background-color: #626363;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 12px;
+  cursor: pointer;
+  opacity: 0.8; /* Slight transparency */
+  transition: opacity 0.2s ease;
+}
+
+.image-preview button:hover {
+  opacity: 1; /* Full opacity on hover */
+  background-color: #414141; /* Darker shade for hover effect */
 }

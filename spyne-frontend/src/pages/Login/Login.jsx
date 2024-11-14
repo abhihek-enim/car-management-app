@@ -4,6 +4,8 @@ import { postData } from "../../utils/apiService";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { addUser } from "../../features/user/userSlice";
+import { hideLoader, showLoader } from "../../features/loaderSlice";
+import { toast } from "react-toastify";
 const Login = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -14,66 +16,60 @@ const Login = () => {
   const [passwordError, setPasswordError] = useState("");
   const submitHandler = async (event) => {
     event.preventDefault();
+    dispatch(showLoader()); // Show loader at the start
 
     try {
       if (currState === "Sign Up") {
+        // Registration flow
         const registerData = {
           username: userName,
           email: email,
           password: password,
         };
-        console.log(registerData, "sent data");
 
-        // Attempt registration
         const registerResponse = await postData(
           "/users/register",
           registerData
         );
 
-        if (registerResponse.success) {
-          // If registration succeeds, log in the user
+        if (registerResponse?.success) {
+          // Attempt login right after successful registration
           const loginResponse = await postData("/users/login", {
             email: email,
             password: password,
           });
-          if (loginResponse.data.user) {
-            console.log(loginResponse.data.user);
-            dispatch(addUser(loginResponse.data.user));
-          }
 
-          const accessToken = loginResponse?.data?.accessToken;
-          if (accessToken) {
-            localStorage.setItem("token", accessToken);
-            navigate("/addProduct");
+          if (loginResponse?.data?.user && loginResponse?.data?.accessToken) {
+            dispatch(addUser(loginResponse.data.user));
+            localStorage.setItem("token", loginResponse.data.accessToken);
+            navigate("/addProducts");
           } else {
-            console.error(
-              "Failed to retrieve access token after registration."
-            );
+            console.error("Login after registration failed:", loginResponse);
           }
         } else {
           console.error("Registration failed:", registerResponse);
         }
       } else {
-        // Log in directly if not signing up
+        // Login flow
         const loginResponse = await postData("/users/login", {
           email: email,
           password: password,
         });
-        if (loginResponse.data.user) {
-          loginResponse.data.user;
-          dispatch(addUser(loginResponse.data.user));
-        }
 
-        const accessToken = loginResponse?.data?.accessToken;
-        if (accessToken) {
-          localStorage.setItem("token", accessToken);
-          navigate("/addProduct");
+        if (loginResponse?.data?.user && loginResponse?.data?.accessToken) {
+          dispatch(addUser(loginResponse.data.user));
+          localStorage.setItem("token", loginResponse.data.accessToken);
+          navigate("/addProducts");
         } else {
-          console.error("Failed to retrieve access token.");
+          console.error("Login failed:", loginResponse);
         }
       }
     } catch (error) {
       console.error("Error in submitHandler:", error);
+      toast.error(error.message);
+    } finally {
+      // Ensure loader is hidden after the entire process
+      dispatch(hideLoader());
     }
   };
 

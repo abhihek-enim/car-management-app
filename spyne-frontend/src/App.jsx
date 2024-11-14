@@ -1,13 +1,20 @@
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { routes } from "./utils/router";
+import { BrowserRouter as Router } from "react-router-dom";
+// import { routes } from "./utils/router";
+import AppRoutes from "./Router";
 import "./App.css";
-
-const router = createBrowserRouter(routes);
+import Loader from "./components/Loader/Loader";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+// const router = createBrowserRouter(routes);
 
 function App() {
   return (
     <>
-      <RouterProvider router={router} />
+      <ToastContainer />
+      <Loader />
+      <Router>
+        <AppRoutes />
+      </Router>
     </>
   );
 }

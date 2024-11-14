@@ -97,7 +97,7 @@ const getCarDetails = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, carDetails, "Car Details Fetched successfully"));
 });
 const updateCarDetails = asyncHandler(async (req, res) => {
-  const { title, description, tags, imagePublicIds, carId } = req.body;
+  let { title, description, tags, imagePublicIds, carId } = req.body;
   console.log(req.body);
   if (!title || !description || !tags || tags.length === 0) {
     throw new ApiError(
@@ -111,7 +111,7 @@ const updateCarDetails = asyncHandler(async (req, res) => {
     throw new ApiError(404, "Car does not exist.");
   }
 
-  let carImages = [];
+  let carImages = isCarPresent.images;
 
   // Update images only if imagePublicIds are provided
   if (imagePublicIds && imagePublicIds.length > 0) {
@@ -121,8 +121,11 @@ const updateCarDetails = asyncHandler(async (req, res) => {
     } else {
       throw new ApiError(
         400,
-        "At least one new image is required if updating images."
+        "At least one new image is required if updating images. "
       );
+    }
+    if (typeof imagePublicIds === "string") {
+      imagePublicIds = [imagePublicIds];
     }
 
     // Check if the number of image files and public IDs match

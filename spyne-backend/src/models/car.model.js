@@ -10,11 +10,10 @@ const carSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    tags: [
-      {
-        type: String,
-      },
-    ],
+    tags: {
+      type: String,
+    },
+
     images: [
       {
         type: String, // URL or path to image,

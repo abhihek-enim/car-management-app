@@ -1,24 +1,15 @@
 import { useState } from "react";
-import "./AddProduct.css";
-import { useDispatch, useSelector } from "react-redux";
+import "./EditProduct.css";
+// import { useSelector } from "react-redux";
 import { postData } from "../../utils/apiService";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import Navbar from "../../components/Navbar/Navbar";
-import { hideLoader, showLoader } from "../../features/loaderSlice";
-import { toast } from "react-toastify";
-
-const AddProduct = () => {
+const EditProduct = () => {
   const navigate = useNavigate();
-  const userName = useSelector((state) => state.user.user.username);
-  //   console.log(userName);
-  const [formData, setFormData] = useState({
-    title: "",
-    description: "",
-    tags: "",
-    car: [],
-  });
-  const [imagePreviews, setImagePreviews] = useState([]);
-  const dispatch = useDispatch();
+  const location = useLocation();
+  const [formData, setFormData] = useState(location.state);
+  const [imagePreviews, setImagePreviews] = useState(location.state.images);
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
@@ -30,53 +21,38 @@ const AddProduct = () => {
 
     // Create preview URLs
     const previews = files.map((file) => URL.createObjectURL(file));
-    setImagePreviews(previews);
+    setImagePreviews((prev) => [...prev, previews]);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const form = new FormData();
-    if (
-      !formData.title ||
-      !formData.description ||
-      !formData.tags ||
-      formData.car.length === 0
-    ) {
-      toast.error("All fields are required.");
-      return;
-    }
-    console.log(formData.car[0]);
-    form.append("title", formData.title);
-    form.append("description", formData.description);
-    form.append("tags", formData.tags);
-    if (formData.car && formData.car.length > 0) {
-      formData.car.forEach((image) => {
-        // console.log(image);
-        form.append(`car`, image);
-      });
-    }
-    console.log("FormData content:");
-    for (let [key, value] of form.entries()) {
-      console.log(key, value);
-    }
-    try {
-      dispatch(showLoader());
-      await postData("/cars/addCar", form).then((res) => {
-        console.log(res);
-        dispatch(hideLoader());
-        navigate("/productsList");
-      });
-    } catch (error) {
-      console.log(error);
-    }
+    console.log(formData);
+
+    // const form = new FormData();
+    // form.append("title", formData.title);
+    // form.append("description", formData.description);
+    // form.append("tags", formData.tags);
+    // if (formData.car && formData.car.length > 0) {
+    //   formData.car.forEach((image) => {
+    //     form.append(`car`, image);
+    //   });
+    // }
+    // try {
+    //   await postData("/cars/addCar", form).then((res) => {
+    //     console.log(res);
+
+    //     navigate("/productsList");
+    //   });
+    // } catch (error) {
+    //   console.log(error);
+    // }
   };
 
   return (
     <>
       <Navbar />
       <div className="add-product-container">
-        <h1>Add New Product</h1>
-        <p>Welcome,{userName} !</p>
+        <h1>Edit New Product</h1>
 
         <form onSubmit={handleSubmit} className="product-form">
           <label>
@@ -130,11 +106,11 @@ const AddProduct = () => {
             ))}
           </div>
 
-          <button type="submit">Save Product</button>
+          <button type="submit">Edit Product</button>
         </form>
       </div>
     </>
   );
 };
 
-export default AddProduct;
+export default EditProduct;

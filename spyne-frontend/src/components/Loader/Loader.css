@@ -1,0 +1,38 @@
+/* Loader container - full-screen overlay */
+.loader {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent dark veil */
+  z-index: 1000; /* Ensures the loader is on top of other elements */
+}
+
+/* Spinner styles */
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 5px solid rgba(255, 255, 255, 0.3);
+  border-top-color: #fcfcfc;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+/* Spinner animation */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 600px) {
+  .spinner {
+    width: 30px;
+    height: 30px;
+    border-width: 4px;
+  }
+}
