@@ -21,6 +21,7 @@ function extractPublicIds(images) {
 }
 
 const addCarDetails = asyncHandler(async (req, res) => {
+  console.log(req);
   const { title, description, tags } = req.body;
 
   if (!title || !description || (tags && tags.length === 0)) {
@@ -39,6 +40,8 @@ const addCarDetails = asyncHandler(async (req, res) => {
       "A car with a similar title or description already exists."
     );
   }
+  console.log(req.body);
+  console.log(req.files);
 
   let carImagesLocalPath = [];
   if (req.files && Array.isArray(req.files.car) && req.files.car.length > 0) {

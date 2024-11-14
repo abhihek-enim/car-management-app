@@ -1,1 +1,59 @@
+.login {
+  min-height: 100vh;
+  background: url(https://res.cloudinary.com/dwxfnfvwa/image/upload/v1731551736/rzzjqbxlgknljvwop1hb.jpg)
+    no-repeat;
+  background-size: cover;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
 
+.login-form {
+  background: rgb(113, 113, 112);
+  padding: 30px 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  border-radius: 10px;
+  margin-left: 10%;
+}
+.login-form h2 {
+  font-weight: 500;
+}
+.form-input {
+  padding: 8px 12px;
+  border: 1px solid #c9c9c9;
+  border-radius: 4px;
+  outline-color: #cdccca;
+}
+
+.login-form button {
+  padding: 10px;
+  background-color: #080808;
+  color: white;
+  font-size: 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.login-forgot {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.login-toggle {
+  font-size: 13px;
+  color: #fcf8f8;
+}
+.login-toggle span {
+  font-weight: 500;
+  color: #a4a3a2;
+  cursor: pointer;
+}
+.login-term {
+  display: flex;
+  gap: 5px;
+  font-size: 12px;
+  color: #fff9f9;
+}
