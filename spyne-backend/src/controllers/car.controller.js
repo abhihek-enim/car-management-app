@@ -98,7 +98,7 @@ const getCarDetails = asyncHandler(async (req, res) => {
 });
 const updateCarDetails = asyncHandler(async (req, res) => {
   let { title, description, tags, imagePublicIds, carId } = req.body;
-  console.log(req.body);
+  // console.log(req.body);
   if (!title || !description || !tags || tags.length === 0) {
     throw new ApiError(
       400,
@@ -125,8 +125,9 @@ const updateCarDetails = asyncHandler(async (req, res) => {
       );
     }
     if (typeof imagePublicIds === "string") {
-      imagePublicIds = [imagePublicIds];
+      imagePublicIds = imagePublicIds.split(",");
     }
+    console.log(imagePublicIds);
 
     // Check if the number of image files and public IDs match
     if (carImagesLocalPath.length !== imagePublicIds.length) {
@@ -151,10 +152,13 @@ const updateCarDetails = asyncHandler(async (req, res) => {
         publicId
       );
 
+      console.log(publicId);
+      carImages = carImages.filter((image) => !image.includes(publicId + ""));
+
       if (!uploadResult || !uploadResult.url) {
         throw new ApiError(500, "Error while uploading image.");
       }
-
+      console.log(carImages);
       carImages.push(uploadResult.url);
     }
   } else {

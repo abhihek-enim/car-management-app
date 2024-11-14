@@ -8,8 +8,14 @@ const EditProduct = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [formData, setFormData] = useState(location.state);
+  // object title, descri, tags, images[urls] carId
   const [imagePreviews, setImagePreviews] = useState(location.state.images);
-
+  function extractPublicId(imageUrl) {
+    const match = imageUrl.match(/\/upload\/(?:v\d+\/)?([^/.]+)\./);
+    return match ? match[1] : null;
+  }
+  const [imagePublicIds, setImagePublicIds] = useState([]);
+  const [editImages, setEditImages] = useState([]);
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
@@ -23,29 +29,51 @@ const EditProduct = () => {
     const previews = files.map((file) => URL.createObjectURL(file));
     setImagePreviews((prev) => [...prev, previews]);
   };
+  const handleEditImageClick = (index) => {
+    document.getElementById(`file-input-${index}`).click();
+  };
+  const handleFileChange = (e, index, url) => {
+    const file = e.target.files[0];
 
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const updatedPreviews = [...imagePreviews];
+        updatedPreviews[index] = reader.result;
+        setImagePreviews(updatedPreviews);
+      };
+      reader.readAsDataURL(file);
+
+      setImagePublicIds((prev) => [...prev, extractPublicId(url)]);
+      setEditImages((prev) => [...prev, file]);
+    }
+  };
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log(formData);
+    console.log(imagePublicIds);
+    console.log(editImages);
 
-    // const form = new FormData();
-    // form.append("title", formData.title);
-    // form.append("description", formData.description);
-    // form.append("tags", formData.tags);
-    // if (formData.car && formData.car.length > 0) {
-    //   formData.car.forEach((image) => {
-    //     form.append(`car`, image);
-    //   });
-    // }
-    // try {
-    //   await postData("/cars/addCar", form).then((res) => {
-    //     console.log(res);
+    const form = new FormData();
+    form.append("title", formData.title);
+    form.append("description", formData.description);
+    form.append("tags", formData.tags);
+    form.append("imagePublicIds", imagePublicIds);
+    form.append("carId", formData._id);
+    if (editImages.length > 0) {
+      editImages.forEach((image) => {
+        form.append(`car`, image);
+      });
+    }
+    try {
+      await postData("/cars/updateCar", form).then((res) => {
+        console.log(res);
 
-    //     navigate("/productsList");
-    //   });
-    // } catch (error) {
-    //   console.log(error);
-    // }
+        navigate("/productsList");
+      });
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -102,6 +130,20 @@ const EditProduct = () => {
             {imagePreviews.map((url, index) => (
               <div key={index} className="image-preview">
                 <img src={url} alt={`Preview ${index}`} />
+                <button
+                  type="button"
+                  className="edit-button"
+                  onClick={() => handleEditImageClick(index)}
+                >
+                  Edit
+                </button>
+                <input
+                  id={`file-input-${index}`}
+                  type="file"
+                  accept="image/*"
+                  style={{ display: "none" }}
+                  onChange={(e) => handleFileChange(e, index, url)}
+                />
               </div>
             ))}
           </div>

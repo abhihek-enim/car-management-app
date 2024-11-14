@@ -11,7 +11,7 @@ const ProductList = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [products, setProducts] = useState([]);
-  const [searchTerm, setSearchTerm] = useState("");
+  // const [searchTerm, setSearchTerm] = useState("");
   const [filteredProducts, setFilteredProducts] = useState([]);
   async function fetchUserCars() {
     try {
@@ -28,12 +28,12 @@ const ProductList = () => {
       dispatch(hideLoader());
     }
   }
-  function handleSearch() {
+  function handleSearch(value) {
     const searchResults = products.filter(
       (product) =>
-        product.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        product.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        product.tags.toLowerCase().includes(searchTerm.toLowerCase())
+        product.title.toLowerCase().includes(value.toLowerCase()) ||
+        product.description.toLowerCase().includes(value.toLowerCase()) ||
+        product.tags.toLowerCase().includes(value.toLowerCase())
     );
     setFilteredProducts(searchResults);
   }
@@ -51,9 +51,9 @@ const ProductList = () => {
           <input
             type="text"
             placeholder="Enter search term..."
-            onChange={(e) => setSearchTerm(e.target.value)}
+            onChange={(e) => handleSearch(e.target.value)}
           />
-          <button onClick={handleSearch}>Search</button>
+          {/* <button onClick={handleSearch}>Search</button> */}
         </div>
       </div>
       <div className="product-list">
@@ -87,7 +87,7 @@ const ProductList = () => {
                   })
                 }
               >
-                View Product
+                View
               </button>
               <button
                 onClick={() =>
@@ -96,7 +96,7 @@ const ProductList = () => {
                   })
                 }
               >
-                Edit Product
+                Edit
               </button>
               <img className="delete-product" src="./delete.png" alt="" />
             </div>
