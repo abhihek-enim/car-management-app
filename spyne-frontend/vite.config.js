@@ -7,7 +7,7 @@ export default defineConfig({
   server: {
     proxy: {
       "/api": {
-        target: import.meta.env.VITE_BASE_URL,
+        target: "https://car-management-app-7vu7.onrender.com/api/v1",
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, "/api/v1"),
       },
