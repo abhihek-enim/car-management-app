@@ -23,4 +23,8 @@ app.use("/api/v1/users", userRouter);
 // cars routes
 import carRouter from "./routes/car.routes.js";
 app.use("/api/v1/cars", carRouter);
+
+app.get("/api/docs", (req, res) => {
+  res.redirect("https://documenter.getpostman.com/view/15847976/2sAY55by15");
+});
 export { app };
