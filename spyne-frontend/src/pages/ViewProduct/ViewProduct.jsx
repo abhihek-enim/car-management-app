@@ -29,7 +29,7 @@ const ViewProduct = () => {
     <>
       <Navbar />
       <div className="view-product-container">
-        <div className=" embla image-section">
+        <div className="embla image-section">
           <div className="embla__viewport" ref={emblaRef}>
             <div className="embla__container">
               {product.images.map((image, index) => (
@@ -45,7 +45,7 @@ const ViewProduct = () => {
           </div>
           <div className="carousel-buttons">
             <button onClick={scrollPrev} className="embla__prev">
-              {`<`}
+              {"<"}
             </button>
             <button onClick={scrollNext} className="embla__next">
               {">"}
