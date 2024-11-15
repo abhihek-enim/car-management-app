@@ -54,7 +54,7 @@
 }
 
 .product-tag {
-  background-color: #007bff;
+  background-color: #4a4a4a;
   color: white;
   padding: 5px 10px;
   border-radius: 15px;
@@ -63,7 +63,7 @@
 }
 
 .product-tag:hover {
-  background-color: #0056b3;
+  background-color: #333;
 }
 
 .view-product {
@@ -129,24 +129,23 @@
   background-color: #0056b3;
 }
 .delete-product {
-  width: 24px; /* Slightly larger for better visibility */
-  height: 24px;
+  width: 30px; /* Slightly larger for better visibility */
+  height: 30px;
   /* Equal height for a square shape */
-  background-color: #cc7a74; /* Red background for the delete icon */
-  border-radius: 50%; /* Circular shape */
+
+  /* border-radius: 50%;  */
   display: flex;
   align-items: center;
   justify-content: center;
   color: white; /* White color for the icon */
-  font-size: 18px; /* Adjust the font size to fit the icon */
+
   cursor: pointer;
-  transition: background-color 0.3s, transform 0.3s; /* Smooth transition for hover effects */
+  transition: transform 0.3s; /* Smooth transition for hover effects */
   border: none; /* No border */
-  padding: 5px;
+  /* padding: 5px; */
 }
 
 .delete-product:hover {
-  background-color: #a55f5f; /* Darker red on hover */
   transform: scale(1.1); /* Slight scale-up effect */
 }
 

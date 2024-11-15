@@ -4,9 +4,13 @@ import "./EditProduct.css";
 import { postData } from "../../utils/apiService";
 import { useLocation, useNavigate } from "react-router-dom";
 import Navbar from "../../components/Navbar/Navbar";
+import { useDispatch } from "react-redux";
+import { hideLoader, showLoader } from "../../features/loaderSlice";
+import { toast } from "react-toastify";
 const EditProduct = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const dispatch = useDispatch();
   const [formData, setFormData] = useState(location.state);
   // object title, descri, tags, images[urls] carId
   const [imagePreviews, setImagePreviews] = useState(location.state.images);
@@ -50,10 +54,8 @@ const EditProduct = () => {
   };
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(formData);
-    console.log(imagePublicIds);
-    console.log(editImages);
 
+    dispatch(showLoader());
     const form = new FormData();
     form.append("title", formData.title);
     form.append("description", formData.description);
@@ -68,11 +70,14 @@ const EditProduct = () => {
     try {
       await postData("/cars/updateCar", form).then((res) => {
         console.log(res);
-
+        dispatch(hideLoader());
         navigate("/productsList");
       });
     } catch (error) {
       console.log(error);
+      toast.error(error.message);
+    } finally {
+      dispatch(hideLoader());
     }
   };
 

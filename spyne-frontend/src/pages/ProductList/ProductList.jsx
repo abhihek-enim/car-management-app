@@ -1,16 +1,19 @@
 import { useEffect, useState } from "react";
 import "./ProductList.css";
-import { getData } from "../../utils/apiService";
+import { deleteData, getData } from "../../utils/apiService";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../../components/Navbar/Navbar";
 import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 import { hideLoader, showLoader } from "../../features/loaderSlice";
+import DialogBox from "../../components/DialogBox/DialogBox";
 
 const ProductList = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [products, setProducts] = useState([]);
+  const [showDialog, setShowDialog] = useState(false);
+  const [carId, setCarId] = useState("");
   // const [searchTerm, setSearchTerm] = useState("");
   const [filteredProducts, setFilteredProducts] = useState([]);
   async function fetchUserCars() {
@@ -40,12 +43,45 @@ const ProductList = () => {
   function getTags(tagsString) {
     return tagsString.split(",").map((tag) => tag.trim());
   }
+  const handleOpenDialog = (id) => {
+    setCarId(id);
+    setShowDialog(true);
+  };
+
+  const handleCloseDialog = () => {
+    setShowDialog(false);
+  };
+
+  const handleConfirmAction = async () => {
+    try {
+      dispatch(showLoader());
+      await deleteData(`/cars/deleteCar/${carId}`).then((res) => {
+        console.log(res);
+      });
+      setShowDialog(false);
+      fetchUserCars();
+      dispatch(hideLoader());
+    } catch (error) {
+      toast.error("Error Occured, try again. ");
+      console.log(error);
+    } finally {
+      dispatch(hideLoader());
+      setShowDialog(false);
+    }
+  };
   useEffect(() => {
     fetchUserCars();
   }, []);
   return (
     <>
       <Navbar />
+      <DialogBox
+        showDialog={showDialog}
+        handleClose={handleCloseDialog}
+        handleConfirm={handleConfirmAction}
+        message="Are you sure you want to delete this product?"
+      />
+
       <div className="search-bar-container">
         <div className="search-bar">
           <input
@@ -98,7 +134,12 @@ const ProductList = () => {
               >
                 Edit
               </button>
-              <img className="delete-product" src="./delete.png" alt="" />
+              <img
+                onClick={() => handleOpenDialog(product._id)}
+                className="delete-product"
+                src="./delete.png"
+                alt=""
+              />
             </div>
           </div>
         ))}

@@ -10,7 +10,6 @@ import { toast } from "react-toastify";
 const AddProduct = () => {
   const navigate = useNavigate();
   const userName = useSelector((state) => state.user.user.username);
-  //   console.log(userName);
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -35,6 +34,7 @@ const AddProduct = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    dispatch(showLoader());
     const form = new FormData();
     if (
       !formData.title ||
@@ -60,7 +60,6 @@ const AddProduct = () => {
       console.log(key, value);
     }
     try {
-      dispatch(showLoader());
       await postData("/cars/addCar", form).then((res) => {
         console.log(res);
         dispatch(hideLoader());
@@ -68,6 +67,8 @@ const AddProduct = () => {
       });
     } catch (error) {
       console.log(error);
+    } finally {
+      dispatch(hideLoader());
     }
   };
 
